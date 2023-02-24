@@ -83,12 +83,8 @@ namespace MoreBreakthroughs
                 MoreBreakThroughs.Log.LogMessage($"CharacterHasBreakThroughPoint:: Character Data EXISTS {Character.Name} [{Character.PlayerStats.m_usedBreakthroughCount}] / [{CurrentMax}] ");
                 return Used < CurrentMax;
             }
-            else
-            {
-                MoreBreakThroughs.Log.LogMessage($"CharacterHasBreakThroughPoint:: Character Data DOES NOT EXIST {Character.Name}" +
-                    $" Current Max set to StartingPointsValue (this generally means they havent earned any yet) currently used [{Character.PlayerStats.m_usedBreakthroughCount}]");
-                return Character.PlayerStats.m_usedBreakthroughCount < StartingPoints.Value;
-            }
+
+            return false;
         }
 
         public CharacterBreakThroughSave AddCharacterData(string CharacterUID, int StartingPoints, int AdditionalBreakThroughs)
@@ -119,8 +115,11 @@ namespace MoreBreakthroughs
             {
                 return CharacterData[CharacterUID];
             }
-
-            return null;
+            else
+            {
+                var NewData = AddCharacterData(CharacterUID, StartingPoints.Value, 0);
+                return NewData;
+            }
         }
     }
 }

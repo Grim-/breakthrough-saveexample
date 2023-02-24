@@ -16,34 +16,21 @@ namespace OutwardModTemplate
         {
             if (_character.IsLocalPlayer)
             {
-                int CurrentUsed = _character.PlayerStats.m_usedBreakthroughCount;
-                
+                var Data = MoreBreakThroughs.Instance.GetData(_character.UID);
 
-                //have we used more than the normal amount, and 
-                if (MoreBreakThroughs.Instance.CharacterHasBreakThroughPoint(_character))
+                if (Data != null)
                 {
+                    __result = MoreBreakThroughs.Instance.CharacterHasBreakThroughPoint(_character);
 
-                    var Data = MoreBreakThroughs.Instance.GetData(_character.UID);
-
-
-                    if (Data == null)
+                    if (__result == false)
                     {
-                        Data = MoreBreakThroughs.Instance.AddCharacterData(_character.UID, MoreBreakThroughs.StartingPoints.Value, 0);
+                        _character.CharacterUI.ShowInfoNotification($"You don't have enough Breakthrough Points. [{_character.PlayerStats.m_usedBreakthroughCount}] / [{Data.StartingMax + Data.AdditionalPoints}] Used.");
                     }
 
-
-                    if (Data != null)
-                    {
-                        int CurrentMaxPoints = Data.AdditionalPoints;
-
-                        int DifferenceBetweenCurrentAndNewMax = CurrentMaxPoints - _character.PlayerStats.m_usedBreakthroughCount;
-                        MoreBreakThroughs.Log.LogMessage($" Character : {_character.Name} loaded Current UsedBreakthrough points : [{_character.PlayerStats.m_usedBreakthroughCount}] Maximum is [{CurrentMaxPoints}] Left to spend : {DifferenceBetweenCurrentAndNewMax}");
-                        __result = true;
-                        //skip original check
-                        return false;
-                    }
-                    else MoreBreakThroughs.Log.LogMessage($"Character Data null for {_character.UID}");
+                    //skip original check
+                    return false;
                 }
+                else MoreBreakThroughs.Log.LogMessage($"Character Data null for {_character.UID}");
             }
             //run original check
             return true;
